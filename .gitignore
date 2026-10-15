@@ -1,0 +1,11 @@
+target/
+tmp/
+.env
+.idea/
+.vscode/
+*.iml
+*.log
+*.hprof
+build/
+load-tests/summary-*.json
+.DS_Store

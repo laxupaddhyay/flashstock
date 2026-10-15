@@ -1,0 +1,75 @@
+spring:
+  application:
+    name: flashstock
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/flashstock}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:32}
+      connection-timeout: ${DB_CONNECTION_TIMEOUT_MS:3000}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+  data:
+    redis:
+      url: ${REDIS_URL:redis://localhost:6379}
+      connect-timeout: ${REDIS_CONNECT_TIMEOUT:1s}
+      timeout: ${REDIS_COMMAND_TIMEOUT:1s}
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+    connection-timeout: ${RABBITMQ_CONNECTION_TIMEOUT:2s}
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      mandatory: true
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+server:
+  shutdown: graceful
+  forward-headers-strategy: framework
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,db
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+flashstock:
+  inventory:
+    reservation-strategy: ${INVENTORY_RESERVATION_STRATEGY:conditional}
+  reservation:
+    ttl: ${RESERVATION_TTL:PT10M}
+    expiration-batch-size: ${EXPIRATION_BATCH_SIZE:100}
+  security:
+    dev-user: ${DEV_USER:demo}
+    dev-password: ${DEV_PASSWORD:}
+  messaging:
+    enabled: ${MESSAGING_ENABLED:true}
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+logging:
+  structured:
+    format:
+      console: logstash
